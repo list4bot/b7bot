@@ -1,0 +1,5 @@
+FROM alpine:3.8
+RUN apk add --no-cache curl
+
+CMD echo https://api.telegram.org/bot$API_TOKEN/setwebhook?url=https://$WEBHOOK_DOMAIN/ && \
+    curl https://api.telegram.org/bot$API_TOKEN/setwebhook?url=https://$WEBHOOK_DOMAIN/

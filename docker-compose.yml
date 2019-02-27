@@ -1,0 +1,47 @@
+version: '3.4'
+services:
+  bot:
+    image: bot/b7bot
+    build: .
+    networks:
+      - default
+      - goat
+    env_file: .env
+    environment:
+      VIRTUAL_HOST: $WEBHOOK_DOMAIN
+      LETSENCRYPT_HOST: $WEBHOOK_DOMAIN
+      LETSENCRYPT_EMAIL: letsencrypt@hi2.in
+      DB_HOST: mysql
+      DB_USERNAME: _
+      DB_PASSWORD: _
+      DB_DATABASE: _
+      DB_PORT: 3306
+    restart: unless-stopped
+    volumes:
+      - mysql-start:/var/www/html/mysql-start
+  mysql:
+    image: mysql:5
+    environment:
+      MYSQL_DATABASE: _
+      MYSQL_USER: _
+      MYSQL_PASSWORD: _
+      MYSQL_ROOT_PASSWORD: _
+    volumes:
+      - mysql:/var/lib/mysql
+      - mysql-start:/docker-entrypoint-initdb.d
+  webhook:
+    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile-webhook
+    restart: "no"
+
+volumes:
+  mysql:
+    name: b7bot-mysql
+  mysql-start:
+
+networks:
+  goat:
+    external:
+      name: webproxy
